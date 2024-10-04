@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
 
 const Item = ({ product }) => {
-  const { cartItems, addToCart, removeFromCart } = useContext(ShopContext)
+  const { cartItems, addToCart, removeFromCart, url } = useContext(ShopContext)
   
   // Check how many of this product are in the cart
   const itemCount = cartItems[product._id] || 0
@@ -13,7 +13,7 @@ const Item = ({ product }) => {
     <div className='shadow-sm'>
       <div className='relative group'>
         {/* Product image */}
-        <img src={product.image} alt={product.name} className='rounded-tl-2xl rounded-tr-xl' />
+        <img src={url+ "/images/" +product.image} alt={product.name} className='rounded-tl-2xl rounded-tr-xl' />
         
         {/* Action buttons (view details and add/remove from cart) */}
         <div className='absolute right-3 bottom-3 flexCenter gap-x-2'>
