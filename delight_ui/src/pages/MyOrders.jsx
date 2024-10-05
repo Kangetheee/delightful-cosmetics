@@ -67,7 +67,7 @@ const MyOrders = () => {
                     </p>
                   </td>
                   <td className='p-2 border'>
-                    <button className='btn-light rounded-sm !py-2'>Track
+                    <button onClick={fetchOrders} className='btn-light rounded-sm !py-2'>Track
                       <span className='hidden lg:flex'>Order</span>
                     </button>
                   </td>

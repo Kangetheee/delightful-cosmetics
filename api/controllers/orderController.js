@@ -117,6 +117,16 @@ const listOrders = async(req, res)=>{
     }
 }
 
+const updateStatus = async(req, res)=>{
+    try {
+        await orderModel.findByIdAndUpdate(req.body.orderId,{status:req.body.status})
+        res.json({success:true, message:"Status Updated"})
+    } catch (error) {
+        console.log(error)
+        res.json({success:false, message:"Error"})
+    }
+}
+
 // const removeOrder = async (req, res) => {
 //     try {
 //         const { id } = req.body; // Ensure that the order ID is passed in the request body
@@ -143,4 +153,4 @@ const listOrders = async(req, res)=>{
 
 
 
-export { placeOrder, verifyOrder, userOrders, listOrders, removeOrder };
+export { placeOrder, verifyOrder, userOrders, listOrders, updateStatus };
