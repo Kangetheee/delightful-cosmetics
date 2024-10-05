@@ -33,9 +33,9 @@ const Cart = () => {
                       <img src={url + "/images/"+ product.image} alt='productImage' height={38} width={38} className='rounded-lg ring-1 ring-slate-900/5 m-1'/>
                     </td>
                     <td className='p-1'><div className='line-clamp-3'>{product.name}</div></td>
-                    <td className='p-1'>${product.price}</td>
+                    <td className='p-1'>KSH {product.price}</td>
                     <td className='p-1'>{cartItems[product._id]}</td>
-                    <td className='p-1'>${product.price * cartItems[product._id]}</td>
+                    <td className='p-1'>KSH {product.price * cartItems[product._id]}</td>
                     <td className='p-1'><div className='bold-22'><TbTrash onClick={()=>{removeFromCart(product._id)}}/></div></td>
                   </tr>
                 );
@@ -51,17 +51,17 @@ const Cart = () => {
             <div>
               <div className='flexBetween py-3 '>
                 <h4 className='medium-16'>SubTotal:</h4>
-                <h4 className='text-gray-30 font-semibold'>${getTotalCartAmount()}</h4>
+                <h4 className='text-gray-30 font-semibold'>KSH {getTotalCartAmount()}</h4>
               </div>
               <hr />
               <div className='flexBetween py-3 '>
                 <h4 className='medium-16'>Shipping Fee</h4>
-                <h4 className='text-gray-30 font-semibold'>${0}</h4>
+                <h4 className='text-gray-30 font-semibold'>KSH {200}</h4>
               </div>
               <hr />
               <div className='flexBetween py-3 '>
                 <h4 className='medium-18'>Total: </h4>
-                <h4 className='text-gray-30 font-semibold'>${getTotalCartAmount()+2}</h4>
+                <h4 className='text-gray-30 font-semibold'>KSH {getTotalCartAmount() + 200}</h4>
               </div>
             </div>
             <button onClick={() => navigate('/order')}  className='btn-secondary w-52 rounded'>Proceed to Checkout</button>

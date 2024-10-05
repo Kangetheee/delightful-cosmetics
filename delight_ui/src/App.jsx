@@ -7,7 +7,7 @@ import Product from './pages/Product';
 import Cart from './pages/Cart';
 import MyOrders from './pages/MyOrders';
 import Verify from './pages/Verify';
-import Orders from './components/Orders';
+import Orders from './pages/Orders';
 import LoginPopup from './components/LoginPopup';
 
 function App() {
