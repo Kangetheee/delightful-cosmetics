@@ -18,8 +18,7 @@ function App() {
       {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
       
       {/* Pass setShowLogin to Header */}
-      <Header setShowLogin={setShowLogin} />
-      
+      <Header setShowLogin={setShowLogin} /> 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/product" element={<Product />}>

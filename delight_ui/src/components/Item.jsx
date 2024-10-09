@@ -1,19 +1,44 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { FaPlus, FaMinus, FaUpRightAndDownLeftFromCenter } from 'react-icons/fa6'
 import { Link } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
 
 const Item = ({ product }) => {
-  const { cartItems, addToCart, removeFromCart, url } = useContext(ShopContext)
-  
+  const { cartItems = {}, addToCart, removeFromCart, url } = useContext(ShopContext)
+  const [error, setError] = useState(null)
+
+  // Handle potential errors with product
+  if (!product || !product._id) {
+    return <div className="text-red-500">Product not found.</div>
+  }
+
   // Check how many of this product are in the cart
   const itemCount = cartItems[product._id] || 0
 
+  const handleAddToCart = async (productId) => {
+    try {
+      await addToCart(productId)
+      setError(null) // Clear any previous error
+    } catch (err) {
+      setError('Failed to add item to cart. Please try again.')
+    }
+  }
+
+  const handleRemoveFromCart = async (productId) => {
+    try {
+      await removeFromCart(productId)
+      setError(null) // Clear any previous error
+    } catch (err) {
+      setError('Failed to remove item from cart. Please try again.')
+    }
+  }
+
   return (
     <div className='shadow-sm'>
+      {error && <div className="text-red-500">{error}</div>} {/* Display error message */}
       <div className='relative group'>
         {/* Product image */}
-        <img src={url+ "/images/" +product.image} alt={product.name} className='rounded-tl-2xl rounded-tr-xl' />
+        <img src={`${url}/images/${product.image}`} alt={product.name} className='rounded-tl-2xl rounded-tr-xl' />
         
         {/* Action buttons (view details and add/remove from cart) */}
         <div className='absolute right-3 bottom-3 flexCenter gap-x-2'>
@@ -25,20 +50,20 @@ const Item = ({ product }) => {
           {/* If itemCount is 0, show only the add button, otherwise show add/remove buttons */}
           {itemCount === 0 ? (
             <FaPlus 
-              onClick={() => addToCart(product._id)} 
+              onClick={() => handleAddToCart(product._id)} 
               className="bg-white h-8 w-8 p-2 rounded-full shadow-inner cursor-pointer" 
             />
           ) : (
             <div className='bg-white rounded-full flexCenter gap-2'>
               {/* Decrement item count */}
               <FaMinus 
-                onClick={() => removeFromCart(product._id)} 
+                onClick={() => handleRemoveFromCart(product._id)} 
                 className="rounded-full h-8 w-8 p-2 cursor-pointer" 
               />
               <p>{itemCount}</p>
               {/* Increment item count */}
               <FaPlus 
-                onClick={() => addToCart(product._id)} 
+                onClick={() => handleAddToCart(product._id)} 
                 className="rounded-full bg-secondary h-6 w-6 p-1 mr-1 cursor-pointer" 
               />
             </div>

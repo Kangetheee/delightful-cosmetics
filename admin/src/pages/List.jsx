@@ -4,22 +4,23 @@ import { toast, ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS for the toast notifications
 import { TbTrash } from 'react-icons/tb'
 
-const List = ({url}) => {
-  // const url = "http://localhost:4000"
-  const [list, setList] = useState([])
+const List = ({ url }) => {
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true); // Added loading state
 
   const fetchList = async () => {
     try {
+      setLoading(true); // Set loading to true before fetching
       const response = await axios.get(`${url}/api/product/list`);
-      console.log(response.data);
       if (response.data.success) {
         setList(response.data.data);
       } else {
         toast.error("Failed to fetch product list");
       }
     } catch (error) {
-      console.error("Error fetching product list:", error);
       toast.error("An error occurred while fetching the list");
+    } finally {
+      setLoading(false); // Set loading to false after fetching
     }
   }
 
@@ -30,10 +31,10 @@ const List = ({url}) => {
     }
 
     try {
-      const response = await axios.post(`${url}/api/product/remove`, { id }); // Corrected `id` usage
+      const response = await axios.post(`${url}/api/product/remove`, { id });
       if (response.data.success) {
         toast.success("Product removed successfully");
-        setList(list.filter(product => product._id !== id)); // Update the list directly
+        setList(list.filter(product => product._id !== id));
       } else {
         toast.error("Failed to remove product");
       }
@@ -61,25 +62,42 @@ const List = ({url}) => {
             </tr>
           </thead>
           <tbody>
-            {list.length > 0 ? (
-              list.map((product) => (
-                <tr key={product._id} className='border-b border-slate-900/20 text-gray-50 p-6 medium-14'> {/* Ensure each row has a unique key */}
-                  <td className='p-1'>
-                    <img src={`${url}/images/` + product.image} height={38} width={38} alt={product.name} className='rounded-lg ring-1 ring-slate-900/5 m-1'/>
-                  </td>
-                  <td className='p-1'><div className='line-clamp-3'>{product.name}</div></td>
-                  <td className='p-1'>Ksh {product.price}</td>
-                  <td className='p-1'>
-                    <button onClick={() => handleRemove(product._id)} className='text-purple-600 hover:text-red-800'>
-                      <div className='bold-22'><TbTrash /></div>
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
+            {loading ? (
               <tr>
-                <td colSpan="4" className="text-center">No products available</td>
+                <td colSpan="4" className="text-center">Loading...</td>
               </tr>
+            ) : (
+              list.length > 0 ? (
+                list.map((product) => (
+                  <tr key={product._id} className='border-b border-slate-900/20 text-gray-50 p-6 medium-14'>
+                    <td className='p-1'>
+                      <img 
+                        src={`${url}/images/` + product.image} 
+                        height={38} 
+                        width={38} 
+                        alt={product.name} 
+                        className='rounded-lg ring-1 ring-slate-900/5 m-1'
+                        onError={(e) => e.target.src = 'path/to/placeholder-image.jpg'} // Replace with a valid placeholder image path
+                      />
+                    </td>
+                    <td className='p-1'><div className='line-clamp-3'>{product.name}</div></td>
+                    <td className='p-1'>Ksh {product.price}</td>
+                    <td className='p-1'>
+                      <button 
+                        onClick={() => handleRemove(product._id)} 
+                        className='text-purple-600 hover:text-red-800'
+                        aria-label={`Remove ${product.name}`} // Adds accessibility
+                      >
+                        <div className='bold-22'><TbTrash /></div>
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="text-center">No products available</td>
+                </tr>
+              )
             )}
           </tbody>
         </table>
