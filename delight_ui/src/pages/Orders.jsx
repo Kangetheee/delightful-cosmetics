@@ -60,26 +60,29 @@ const Orders = () => {
     });
 
     let orderData = {
-        address: data,
+        address: data, // Ensure 'data' holds the correct address
         items: orderItems,
-        amount: getDiscountedTotal(),
+        amount: getDiscountedTotal(), // Ensure this returns the correct amount
+        phone: data.phone
     };
 
     try {
         let response = await axios.post(url + "/api/order/place", orderData, { headers: { token } });
+        
         if (response.data.success) {
-            const { session_url } = response.data;
-            window.location.replace(session_url);
+            // If the STK push was successful, handle the response as needed
+            alert("Payment request sent successfully. Please check your phone for payment confirmation.");
+            navigate("/myorders");
+            // You can redirect the user or show a confirmation message as needed
         } else {
             alert("Error processing your order. Please try again.");
         }
     } catch (error) {
         console.error("Error placing order:", error.response || error.message);
         alert("Network error. Please check your connection and try again.");
-    } finally {
-        setLoading(false); // Stop loading
-    }
+    } 
 };
+
 
 
     useEffect(()=>{
@@ -136,7 +139,7 @@ const Orders = () => {
             className='ring-1 ring-slate-900/15 p-1 pl-3 rounded-sm outline-none w-1/2' 
             required 
           />
-          <input 
+         <input 
             onChange={onChangeHandler} 
             name='street' 
             value={data.street} 
@@ -193,7 +196,7 @@ const Orders = () => {
             <hr />
             <div className='flexBetween py-3'>
               <h4 className='medium-16'>Shipping Fee</h4>
-              <h4 className='text-gray-30 font-semibold'>KSH{200}</h4> {/* Replace with actual shipping fee */}
+              <h4 className='text-gray-30 font-semibold'>KSH{0}</h4> {/* Replace with actual shipping fee */}
             </div>
             <hr />
             <div className='flexBetween py-3'>

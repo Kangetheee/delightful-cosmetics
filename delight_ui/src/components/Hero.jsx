@@ -25,24 +25,24 @@ const Hero = () => {
           </div>
           {/* buttons */}
           <div className='flex items-center gap-x-4'>
-            <Link to={''} className="inline-flex items-center justify-center gap-4 p-3 bg-slate-100 rounded-xl">
-              <div className='regular-14 leading-tight pl-4 '>
-                <h5 className='uppercase font-extrabold'>New Arrivals</h5>
-                <p className='regular-14 mt-1'>20% off</p>
-              </div>
-              <div className='bg-primary h-10 w-10 p-1 rounded-full flexCenter'>
-                <FaArrowRight />
-              </div>
-            </Link>
-            <Link to={''} className="inline-flex items-center justify-center gap-4 p-3 bg-slate-100 rounded-xl">
-              <div className='regular-14 leading-tight pl-4'>
-                <h5 className='uppercase font-extrabold'>Hot Deals</h5>
-                <p className='regular-14 mt-1'>50% off</p>
-              </div>
-              <div className='bg-primary h-10 w-10 p-1 rounded-full flexCenter'>
-                <FaArrowRight />
-              </div>
-            </Link>
+              {/* <Link to={''} className="inline-flex items-center justify-center gap-4 p-3 bg-slate-100 rounded-xl">
+                <div className='regular-14 leading-tight pl-4 '>
+                  <h5 className='uppercase font-extrabold'>New Arrivals</h5>
+                  <p className='regular-14 mt-1'>20% off</p>
+                </div>
+                <div className='bg-primary h-10 w-10 p-1 rounded-full flexCenter'>
+                  <FaArrowRight />
+                </div>
+              </Link>
+              <Link to={''} className="inline-flex items-center justify-center gap-4 p-3 bg-slate-100 rounded-xl">
+                <div className='regular-14 leading-tight pl-4'>
+                  <h5 className='uppercase font-extrabold'>Hot Deals</h5>
+                  <p className='regular-14 mt-1'>50% off</p>
+                </div>
+                <div className='bg-primary h-10 w-10 p-1 rounded-full flexCenter'>
+                  <FaArrowRight />
+                </div>
+              </Link> */}
           </div>
         </div>
 

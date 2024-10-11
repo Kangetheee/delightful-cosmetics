@@ -1,15 +1,35 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
 import Stripe from "stripe";
+import PayHero from 'payhero-wrapper';
+import axios from 'axios';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+const payHero_user = process.env.PAYHERO_USER_KEY;
+const payHero_pass = process.env.PAYHERO_SECRET_KEY;
 
 // Placing user order for frontend
 const placeOrder = async (req, res) => {
     const frontend_url = "http://localhost:5173";
 
+    // Your API username and password
+    const apiUsername = process.env.PAYHERO_USER_KEY; // Use environment variables for security
+    const apiPassword = process.env.PAYHERO_SECRET_KEY;
+
+    // Concatenating username and password with colon
+    const credentials = `${apiUsername}:${apiPassword}`;
+
+    // Base64 encode the credentials
+    const encodedCredentials = Buffer.from(credentials).toString('base64');
+
+    // Creating the Basic Auth token
+    const basicAuthToken = `Basic ${encodedCredentials}`;
+    console.log(basicAuthToken)
+    const payHero = new PayHero(basicAuthToken); // Initialize PayHero with the Basic Auth token
+
     try {
-        const { userId, items, amount, address } = req.body;
+        const { userId, items, amount, address, phone } = req.body;
 
         // Validate input data
         if (!userId || !items || items.length === 0 || !amount || !address) {
@@ -22,50 +42,42 @@ const placeOrder = async (req, res) => {
             items,
             amount,
             address,
+            phone,
         });
         await newOrder.save();
 
         // Clear user's cart
         await userModel.findByIdAndUpdate(userId, { cartData: {} });
 
-        // Prepare line items for Stripe
-        const line_items = items.map((item) => ({
-            price_data: {
-                currency: "kes", // Consider making this dynamic if needed
-                product_data: {
-                    name: item.name,
-                },
-                unit_amount: item.price * 100, // Ensure this calculation is correct
-            },
-            quantity: item.quantity,
-        }));
-
+        // Calculate total amount for the items
+        const totalAmount = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+        console.log(totalAmount)
         // Add delivery charges
-        const deliveryCharge = 2 * 100 ; // Define delivery charge
-        line_items.push({
-            price_data: {
-                currency: "kes",
-                product_data: {
-                    name: "Delivery Charges",
-                },
-                unit_amount: deliveryCharge,
-            },
-            quantity: 1,
-        });
+        const deliveryCharge = 2 * 100; // Adjust delivery charge as needed
+        const finalAmount = totalAmount + deliveryCharge; // Final amount including delivery charges
+        console.log(finalAmount)
+        // Prepare payment details for PayHero
+        const paymentDetails = {
+            amount: finalAmount, // Total amount including delivery charges
+            phone_number: phone, // The user's phone number
+            channel_id: 887, // Channel ID (refer to PayHero docs)
+            provider: "m-pesa", // Payment provider
+            external_reference: `INV-${newOrder._id}`, // Unique reference for the transaction
+            callback_url: "https://97d9-2c0f-fe38-240c-175a-e836-969a-c30b-39bd.ngrok-free.app/", // Your callback URL to handle payment notifications
+            description: items.map((item) => `${item.name} x ${item.quantity}`).join(', '), // Item description
+        };
+        console.log("Making STK Push with Payment Details:", paymentDetails);
 
-        // Create a Stripe Checkout session
-        const session = await stripe.checkout.sessions.create({
-            line_items,
-            mode: "payment",
-            success_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
-            cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
-        });
+        // Make the PayHero STK push request
+        const response = await payHero.makeStkPush(paymentDetails); // Await the response from PayHero
+        console.log("STK Push Success:", response);
 
-        res.json({ success: true, session_url: session.url });
+        // Send a successful response back to the frontend
+        res.json({ success: true, message: "Payment request sent successfully", data: response });
 
     } catch (error) {
-        console.error("Error placing order:", error);
-        res.status(500).json({ success: false, message: "Error processing your order" });
+        console.error("PayHero Error:", error);
+        return res.status(500).json({ success: false, message: "Error with PayHero payment", error });
     }
 };
 

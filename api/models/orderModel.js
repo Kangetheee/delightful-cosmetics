@@ -5,6 +5,7 @@ const orderSchema = new mongoose.Schema({
     items: {type:Array, required:true},
     amount: {type:Number, required:true},
     address: {type:Object, required:true},
+    phone: {type: String, required:true},
     status: {type:String, default:"Product Loading"},
     date: {type:Date, default:Date.now()},
     payment:{type:Boolean, default:false}
