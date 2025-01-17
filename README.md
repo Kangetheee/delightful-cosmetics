@@ -16,6 +16,7 @@
 ---
 
 ## Overview
+![eCommerce Platform](https://github.com/user-attachments/assets/5dc97a90-55dd-409d-9957-b26108af50db)
 
 This is a full-stack eCommerce platform built with the MERN stack (MongoDB, Express, React, Node.js) and integrated with Payhero for secure and seamless payment processing. It includes user authentication using Firebase and features for product management, order tracking, and role-based access control for admin functionalities.
 
@@ -231,3 +232,4 @@ PAYHERO_SECRET_KEY=your_payhero_secret_key
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
+
